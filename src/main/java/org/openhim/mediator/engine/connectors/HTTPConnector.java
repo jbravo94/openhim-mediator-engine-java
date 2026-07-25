@@ -55,8 +55,19 @@ public class HTTPConnector extends UntypedActor {
 
     LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 
+    private final MediatorConfig config;
+
     private SSLContext sslContext;
     private boolean sslTrustAll;
+
+
+    public HTTPConnector() {
+        this(new MediatorConfig());
+    }
+
+    public HTTPConnector(MediatorConfig config) {
+        this.config = config;
+    }
 
 
     private void copyHeaders(MediatorHTTPRequest src, HttpUriRequest dst) {
@@ -100,12 +111,12 @@ public class HTTPConnector extends UntypedActor {
                 break;
             case "POST":
                 uriReq = new HttpPost(buildURI(req));
-                StringEntity entity = new StringEntity(req.getBody());
+                StringEntity entity = new StringEntity(req.getBody(), config.getTransferEncoding());
                 ((HttpPost) uriReq).setEntity(entity);
                 break;
             case "PUT":
                 uriReq = new HttpPut(buildURI(req));
-                StringEntity putEntity = new StringEntity(req.getBody());
+                StringEntity putEntity = new StringEntity(req.getBody(), config.getTransferEncoding());
                 ((HttpPut) uriReq).setEntity(putEntity);
                 break;
             case "DELETE":

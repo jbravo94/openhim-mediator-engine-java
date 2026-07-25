@@ -139,6 +139,8 @@ public class MediatorConfig {
 
     private SSLContext sslContext;
 
+    private String transferEncoding = "UTF-8";
+
     private boolean heartbeatsEnabled = false;
     private int heartbeatPeriodSeconds = 10;
 
@@ -449,5 +451,19 @@ public class MediatorConfig {
      */
     public void setSSLContext(SSLContext sslContext) {
         this.sslContext = sslContext;
+    }
+
+    /**
+     * @see #setTransferEncoding(String)
+     */
+    public String getTransferEncoding() {
+        return transferEncoding;
+    }
+
+    /**
+     * The HTTP transfer encoding to use for requests. Defaults to "UTF-8" if not set.
+     */
+    public void setTransferEncoding(String transferEncoding) {
+        this.transferEncoding = transferEncoding;
     }
 }

@@ -103,6 +103,9 @@ public class MediatorServer {
         httpServer.getServerConfiguration().addHttpHandler(new HttpHandler() {
             @Override
             public void service(Request request, Response response) throws Exception {
+                request.setCharacterEncoding(config.getTransferEncoding());
+                response.setCharacterEncoding(config.getTransferEncoding());
+                
                 response.suspend();
                 rootActor.tell(new GrizzlyHTTPRequest(request, response), ActorRef.noSender());
             }

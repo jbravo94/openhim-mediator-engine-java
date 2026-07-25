@@ -265,6 +265,57 @@ public class HTTPConnectorTest {
     }
 
     @Test
+    public void testGETRequestWithGermanUmlauts() throws Exception {
+        wireMockRule.stubFor(get(urlEqualTo("/test/get/umlauts"))
+                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/plain; charset=UTF-8").withBody("Liebe Grüße aus Österreich: äöüÄÖÜß"))
+        );
+
+        new HTTPConnectorTestKit(system) {{
+            testHTTPMessage(new MediatorHTTPRequest(
+                    getRef(),
+                    getRef(),
+                    "unit-test",
+                    "GET",
+                    "http",
+                    "localhost",
+                    wireMockRule.port(),
+                    "/test/get/umlauts"
+            ), 200, "text/plain; charset=UTF-8", "Liebe Grüße aus Österreich: äöüÄÖÜß");
+
+            wireMockRule.verify(getRequestedFor(urlEqualTo("/test/get/umlauts")));
+        }};
+    }
+
+    @Test
+    public void testPOSTRequestWithGermanUmlauts() throws Exception {
+        wireMockRule.stubFor(post(urlEqualTo("/test/post/umlauts"))
+                        .willReturn(aResponse().withStatus(201).withHeader("Content-Type", "text/plain; charset=UTF-8").withBody("Created"))
+        );
+
+        new HTTPConnectorTestKit(system) {{
+            testHTTPMessage(new MediatorHTTPRequest(
+                    getRef(),
+                    getRef(),
+                    "unit-test",
+                    "POST",
+                    "http",
+                    "localhost",
+                    wireMockRule.port(),
+                    "/test/post/umlauts",
+                    "<message>Liebe Grüße aus Österreich: äöüÄÖÜß</message>",
+                    Collections.singletonMap("Content-Type", "text/xml; charset=UTF-8"),
+                    null
+            ), 201, "text/plain; charset=UTF-8", "Created");
+
+            wireMockRule.verify(
+                    postRequestedFor(urlEqualTo("/test/post/umlauts"))
+                    .withHeader("Content-Type", equalTo("text/xml; charset=UTF-8"))
+                    .withRequestBody(equalTo("<message>Liebe Grüße aus Österreich: äöüÄÖÜß</message>"))
+            );
+        }};
+    }
+
+    @Test
     public void testGETRequestWithURI() throws Exception {
         wireMockRule.stubFor(get(urlEqualTo("/test/get/with/uri"))
                 .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/plain").withBody("test"))

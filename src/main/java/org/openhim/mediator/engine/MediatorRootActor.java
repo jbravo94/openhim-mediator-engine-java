@@ -78,7 +78,7 @@ public class MediatorRootActor extends UntypedActor {
             }
         }
 
-        getContext().actorOf(Props.create(HTTPConnector.class), "http-connector");
+        getContext().actorOf(Props.create(HTTPConnector.class, config), "http-connector");
         getContext().actorOf(Props.create(CoreAPIConnector.class, config), "core-api-connector");
         getContext().actorOf(Props.create(MLLPConnector.class), "mllp-connector");
         getContext().actorOf(Props.create(UDPFireForgetConnector.class), "udp-fire-forget-connector");
